@@ -5,8 +5,8 @@
   "description": "Backend para análisis algorítmico",
   "main": "api/analizar.js",
   "scripts": {
-    "dev": "nodemon api/analizar.js",
-    "start": "node api/analizar.js"
+    "dev": "nodemon analizar.js",
+    "start": "node analizar.js"
   },
   "repository": {
     "type": "git",
