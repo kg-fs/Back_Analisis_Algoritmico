@@ -1,16 +1,13 @@
-const express = require('express');
-const cors = require('cors');
-const { VM } = require('vm2');
-const axios = require('axios');
-const serverless = require('serverless-http');
-
-const app = express();
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+import { VM } from 'vm2';
+import axios from 'axios';
 
 const LENGUAJES = ["js", "python", "c", "java", "go"];
 
-app.post('/api/analizar', async (req, res) => {
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: "Método no permitido" });
+  }
+
   const { lenguaje, codigo, entradas } = req.body;
 
   if (!LENGUAJES.includes(lenguaje)) {
@@ -31,6 +28,7 @@ app.post('/api/analizar', async (req, res) => {
       }
     }
   } else {
+    // Python, C, Java, Go usando Piston
     for (const n of entradas) {
       const start = Date.now();
       try {
@@ -67,8 +65,4 @@ app.post('/api/analizar', async (req, res) => {
     bigO,
     ratios: ratios.map(r => r.toFixed(2))
   });
-});
-
-
-module.exports.handler = serverless(app);
-
+}
