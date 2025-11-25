@@ -1,4 +1,3 @@
-
 import express from 'express';
 import cors from 'cors';
 import { VM } from 'vm2';
@@ -18,7 +17,8 @@ app.post('/api/analizar', async (req, res) => {
     const { lenguaje, codigo, entradas } = req.body;
     if (!lenguaje || !codigo || !entradas) return res.status(400).json({ error: 'Faltan datos' });
 
-    const LENGUAJES = ['js', 'c', 'cpp', 'java', 'csharp'];
+    // Lenguajes soportados
+    const LENGUAJES = ['js', 'c', 'cpp', 'java', 'csharp', 'go', 'php', 'typescript'];
     if (!LENGUAJES.includes(lenguaje)) return res.status(400).json({ error: 'Lenguaje no soportado' });
 
     const tiempos = [];
@@ -35,7 +35,7 @@ app.post('/api/analizar', async (req, res) => {
         }
       }
     } else {
-      // Para C, C++, Java y C#
+      // Para los demás lenguajes: C, C++, Java, C#, Go, PHP, TypeScript
       for (const n of entradas) {
         const start = Date.now();
         try {
@@ -80,4 +80,5 @@ app.post('/api/analizar', async (req, res) => {
 // Puerto dinámico para Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
+
 
