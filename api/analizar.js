@@ -72,6 +72,3 @@ app.post('/api/analizar', async (req, res) => {
 
 module.exports.handler = serverless(app);
 
-if (require.main === module) {
-  app.listen(3000, () => console.log("Servidor local en http://localhost:3000"));
-}
