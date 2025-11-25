@@ -1,0 +1,31 @@
+{
+  "name": "back_analisis_algoritmico",
+  "version": "1.0.0",
+  "description": "Backend para análisis algorítmico",
+  "main": "api/analizar.js",
+  "scripts": {
+    "dev": "nodemon api/analizar.js",
+    "start": "node api/analizar.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kg-fs/Back_Analisis_Algoritmico.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kg-fs/Back_Analisis_Algoritmico/issues"
+  },
+  "homepage": "https://github.com/kg-fs/Back_Analisis_Algoritmico#readme",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "vm2": "^3.10.0",
+    "serverless-http": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
