@@ -1,6 +1,7 @@
 {
   "name": "back_analisis_algoritmico",
   "version": "1.0.0",
+   "type": "module",
   "description": "Backend para análisis algorítmico",
   "main": "api/analizar.js",
   "scripts": {
