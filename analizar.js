@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import { VM } from 'vm2';
 import axios from 'axios';
 
 const app = express();
@@ -18,39 +17,31 @@ app.post('/api/analizar', async (req, res) => {
     if (!lenguaje || !codigo || !entradas) return res.status(400).json({ error: 'Faltan datos' });
 
     // Lenguajes soportados
-    const LENGUAJES = ['js', 'c', 'cpp', 'java', 'csharp', 'go', 'php', 'typescript'];
+    const LENGUAJES = ['js', 'c', 'cpp', 'java', 'csharp', 'go', 'typescript'];
     if (!LENGUAJES.includes(lenguaje)) return res.status(400).json({ error: 'Lenguaje no soportado' });
 
     const tiempos = [];
 
-    if (lenguaje === 'js') {
-      const vm = new VM({ timeout: 5000, sandbox: { console } });
-      for (const n of entradas) {
-        const start = Date.now();
-        try {
-          vm.run(`function algoritmo(n){ ${codigo} } algoritmo(${n});`);
-          tiempos.push(Date.now() - start);
-        } catch {
-          tiempos.push(-1);
-        }
-      }
-    } else {
-      // Para los demás lenguajes: C, C++, Java, C#, Go, PHP, TypeScript
-      for (const n of entradas) {
-        const start = Date.now();
-        try {
-          const response = await axios.post('https://emkc.org/api/v2/piston/execute', {
-            language: lenguaje,
-            version: '*',
-            files: [{ name: 'main', content: codigo }],
-            stdin: `${n}`
-          });
-          console.log(response.data); // Para depuración
-          tiempos.push(Date.now() - start);
-        } catch (e) {
-          console.error('Error Piston:', e.message);
-          tiempos.push(-1);
-        }
+    // Ejecutar todo con Piston
+    for (const n of entradas) {
+      const start = Date.now();
+      try {
+        const response = await axios.post('https://emkc.org/api/v2/piston/execute', {
+          language: lenguaje === 'typescript' ? 'ts' : lenguaje, // Piston usa 'ts' para TypeScript
+          version: '*',
+          files: [{ name: 'main', content: `
+            function algoritmo(n) {
+              ${codigo}
+            }
+            algoritmo(${n});
+          `}],
+          stdin: ''
+        });
+        console.log(response.data); // Para depuración
+        tiempos.push(Date.now() - start);
+      } catch (e) {
+        console.error(`Error Piston (${lenguaje}):`, e.message);
+        tiempos.push(-1);
       }
     }
 
@@ -60,7 +51,7 @@ app.post('/api/analizar', async (req, res) => {
     for (let i = 1; i < tiemposValidos.length; i++) {
       ratios.push(tiemposValidos[i-1] === 0 ? 1 : tiemposValidos[i] / tiemposValidos[i-1]);
     }
-    const avgRatio = ratios.length ? ratios.reduce((a,b) => a+b,0)/ratios.length : 0;
+    const avgRatio = ratios.length ? ratios.reduce((a,b)=>a+b,0)/ratios.length : 0;
 
     let bigO = 'O(?)';
     if (avgRatio < 3) bigO = 'O(1)';
@@ -80,5 +71,3 @@ app.post('/api/analizar', async (req, res) => {
 // Puerto dinámico para Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
-
-
